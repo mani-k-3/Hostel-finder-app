@@ -18,13 +18,14 @@ class _HomePageState extends State<HomePage> {
       _searchResult = 'Search result for: $query';
     });
   }
+
   void navigateToLoginPage() {
     // Use Navigator to push the login page onto the screen.
-   // Navigator.of(context).push(
-    //  MaterialPageRoute(
-    //    builder: (context) => LoginPage(),
-    //  ),
-   // );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+    );
   }
 
   @override
@@ -58,7 +59,8 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           IconButton(
-            icon: _isSearching ? const Icon(Icons.close) : const Icon(Icons.search),
+            icon: _isSearching ? const Icon(Icons.close) : const Icon(
+                Icons.search),
             onPressed: () {
               setState(() {
                 _isSearching = !_isSearching;
