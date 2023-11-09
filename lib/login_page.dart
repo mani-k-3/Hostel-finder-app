@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hostel_app/AuthProvider.dart';
 import 'package:hostel_app/home.dart';
+import 'package:hostel_app/signup.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -48,6 +51,30 @@ class _LoginScreenState extends State<LoginScreen> {
               child: const Text('Login'),
             ),
             const SizedBox(height: 16),
+        const SizedBox(height: 20), // Add spacing
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Don't have an account? ",
+                style: TextStyle(
+                  color: Colors.black,
+                )),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SignUpScreen(),
+                  ),
+                );
+              },
+              child: const Text('Register',
+                  style: TextStyle(
+                    color: Colors.black,
+                  )),
+
+            ),
+            ],
+        ),
             ElevatedButton(
               onPressed: () {
                 signInWithGoogle(context);
@@ -65,22 +92,27 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = passwordController.text;
 
     try {
-      UserCredential? userCredential =
-      await _authProvider.signInWithEmailPassword(email, password);
-
-      if (userCredential?.user != null) {
-        // Navigate to Professor Home Page or next screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sign-in failed. Please try again.')),
-        );
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Sign-in failed. Please try again.';
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Wrong password provided for that user.';
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
     } catch (e) {
       print('Error signing in: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     }
   }
+
 
   Future<void> signInWithGoogle(BuildContext context) async {
     try {

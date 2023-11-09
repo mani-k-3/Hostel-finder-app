@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
     // Use Navigator to push the login page onto the screen.
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => LoginScreen(),
+        builder: (context) => const LoginScreen(),
       ),
     );
   }

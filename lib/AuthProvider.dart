@@ -58,5 +58,7 @@ class AuthProvider {
     return _auth.currentUser?.uid;
   }
 
+  signUpWithMobile(String s) {}
+
 // ... other methods ...
 }
